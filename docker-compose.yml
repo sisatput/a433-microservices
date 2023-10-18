@@ -7,7 +7,7 @@ services:
     image: ghcr.io/sisatput/item-app:v1
     # Melakukan port mapping agar dapat diakses dari port 80 di host
     ports:
-      - "800:8080"
+      - "80:8080"
     # Pastikan item-app hanya berjalan setelah item-db diluncurkan
     depends_on:
       - item-db
