@@ -1,0 +1,11 @@
+apiVersion: v1  # Menentukan versi API Kubernetes yang akan digunakan.
+kind: Service  # Menentukan jenis objek Kubernetes yang akan dibuat, yaitu Service.
+metadata:  # Informasi metadata untuk objek Service.
+  name: mongo  # Nama objek Service yang akan dibuat.
+spec:  # Spesifikasi konfigurasi untuk Service.
+  selector:  # Selektor untuk menentukan pod yang akan menerima lalu lintas dari Service ini.
+    app: mongo-app  # Menunjuk kepada pod dengan label "app: mongo-app".
+  ports:  # Daftar port yang akan dibuka oleh Service ini.
+    - protocol: TCP  # Protokol yang digunakan, dalam hal ini TCP.
+      port: 27017  # Port eksternal yang akan digunakan oleh Service ini.
+      targetPort: 27017  # Port internal pada pod yang akan menerima lalu lintas dari Service ini.

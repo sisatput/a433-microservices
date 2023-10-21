@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: karsajobs-ui-deployment
+spec:
+  replicas: 1 # Menetapkan jumlah replika aplikasi
+  selector:
+    matchLabels:
+      app: karsajobs-ui # Menentukan label untuk seleksi pod
+  template:
+    metadata:
+      labels:
+        app: karsajobs-ui # Menetapkan label untuk template pod
+    spec:
+      containers:
+        - name: karsajobs-ui
+          image: ghcr.io/sisatput/karsajobs-ui:latest # Nama gambar yang akan digunakan untuk kontainer
+          ports:
+            - containerPort: 8000 # Menetapkan port kontainer yang akan di-expose
+          env:
+            - name: VUE_APP_BACKEND # Nama variabel lingkungan untuk backend Vue
+              value: http://192.168.49.2:30800

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: karsajobs-ui # Nama layanan yang akan digunakan
+spec:
+  type: NodePort # Jenis layanan yang akan di-deploy
+  selector:
+    app: karsajobs-ui # Selektor untuk memilih pod yang akan dihubungkan
+  ports:
+    - protocol: TCP
+      port: 8000 # Port yang akan digunakan untuk layanan
+      targetPort: 8000 # Port yang akan di-targetkan pada pod
+      nodePort: 30100 # NodePort yang akan di-assign

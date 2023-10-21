@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: karsajobs-deployment
+  labels:
+    app: karsajobs
+spec:
+  replicas: 1 # Menetapkan jumlah replika aplikasi
+  selector:
+    matchLabels:
+      app: karsajobs # label untuk pod
+  template:
+    metadata:
+      labels:
+        app: karsajobs # label untuk template pod
+    spec:
+      containers:
+        - name: karsajobs
+          image: ghcr.io/sisatput/karsajobs:latest # Nama images yang akan digunakan untuk kontainer
+          ports:
+            - containerPort: 8080 # Menetapkan port kontainer yang akan di-expose
+          env:
+            - name: APP_PORT
+              value: "8080" # Nilai variabel lingkungan untuk port aplikasi
+            - name: MONGO_HOST
+              value: "mongo-service" # Nama layanan MongoDB yang akan digunakan
+            - name: MONGO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_USERNAME # Mengambil nilai username MongoDB dari secret
+            - name: MONGO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_PASSWORD # Mengambil nilai password MongoDB dari secret

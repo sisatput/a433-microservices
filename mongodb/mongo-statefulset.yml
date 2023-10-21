@@ -1,0 +1,50 @@
+apiVersion: apps/v1  # Versi API dari objek StatefulSet.
+kind: StatefulSet  # Menentukan jenis objek Kubernetes yang akan dibuat, dalam hal ini StatefulSet.
+metadata:
+  name: mongo  # Nama dari StatefulSet.
+  labels:
+    app: mongo-app  # Label untuk klasifikasi objek.
+spec:
+  selector:
+    matchLabels:
+      app: mongo-app  # Label yang cocok dengan pod yang diinginkan.
+      tier: backend  # Label tambahan untuk pengelompokan.
+  serviceName: mongo  # Nama layanan yang akan digunakan oleh StatefulSet.
+  replicas: 1  # Jumlah replika dari pod yang akan dibuat.
+  template:  # Template untuk pod yang akan dibuat oleh StatefulSet.
+    metadata:
+      labels:
+        app: mongo-app  # Label untuk klasifikasi pod.
+        tier: backend  # Label tambahan untuk pengelompokan.
+    spec:
+      containers:
+        - image: mongo:4.4  # Image yang akan digunakan untuk container.
+          name: mongo  # Nama dari container.
+          env:  # Variabel lingkungan yang akan digunakan dalam container.
+            - name: MONGO_INITDB_ROOT_USERNAME_FILE  # Nama variabel lingkungan.
+              value: /etc/mongo-secret/MONGO_ROOT_USERNAME  # Nilai dari variabel lingkungan.
+            - name: MONGO_INITDB_ROOT_PASSWORD_FILE  # Nama variabel lingkungan.
+              value: /etc/mongo-secret/MONGO_ROOT_PASSWORD  # Nilai dari variabel lingkungan.
+          ports:  # Port yang akan diekspos oleh container.
+            - containerPort: 27017  # Nomor port yang diekspos.
+              name: mongo  # Nama untuk port yang diekspos.
+          volumeMounts:  # Volume yang akan dipasang pada container.
+            - name: mongo-pvc # Nama volume yang akan dipasang.
+              mountPath: /data/db  # Path di mana volume akan dipasang.
+            - name: mongo-config-map  # Nama volume yang akan dipasang.
+              mountPath: /config  # Path di mana volume akan dipasang.
+            - name: mongo-secret  # Nama volume yang akan dipasang.
+              mountPath: /etc/mongo-secret  # Path di mana volume akan dipasang.
+      volumes:  # Daftar volume yang akan digunakan dalam pod.
+        - name: mongo-pvc  # Nama volume yang akan digunakan.
+          persistentVolumeClaim:
+            claimName: mongo-pvc  # Nama klaim dari persistent volume.
+        - name: mongo-config-map  # Nama volume yang akan digunakan.
+          configMap:
+            name: mongo-configmap  # Nama ConfigMap yang akan digunakan.
+            items: 
+              - key: mongo.conf  # Kunci dari data ConfigMap.
+                path: mongo.conf  # Path di mana data ConfigMap akan dipasang.
+        - name: mongo-secret  # Nama volume yang akan digunakan.
+          secret:
+            secretName: mongo-secret  # Nama dari secret yang akan digunakan.
