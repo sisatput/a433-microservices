@@ -1,0 +1,37 @@
+apiVersion: v1 # Versi dari API Kubernetes yang digunakan
+kind: Service # Jenis objek Kubernetes yang didefinisikan adalah Service
+metadata: # Metadata untuk objek
+  name: shipping-service # Nama dari Service yang akan dibuat
+spec: # Spesifikasi Service
+  selector: # Menentukan pod yang akan disaring oleh Service
+    app: shipping-service # Menggunakan label "app: shipping-service" untuk menyaring pod
+  ports: # Mendefinisikan port yang akan di-expose
+    - protocol: TCP # Protokol yang digunakan (dalam hal ini TCP)
+      port: 3001 # Port yang digunakan oleh Service itu sendiri
+      targetPort: 3001 # Port yang dituju di dalam pod
+
+---
+apiVersion: apps/v1 # Versi dari API Kubernetes yang digunakan untuk objek Deployment
+kind: Deployment # Jenis objek Kubernetes yang didefinisikan adalah Deployment
+metadata: # Metadata untuk objek
+  name: shipping-service # Nama dari Deployment yang akan dibuat
+  labels: # Label yang digunakan untuk menyaring objek terkait
+    app: shipping-service # Menggunakan label "app: shipping-service" untuk menyaring pod
+spec: # Spesifikasi Deployment
+  replicas: 1 # Jumlah replika yang akan dijalankan
+  selector: # Menentukan pod mana yang akan di-manage oleh Deployment
+    matchLabels: # Label yang digunakan untuk menyaring pod terkait
+      app: shipping-service # Label yang digunakan untuk menyaring pod
+  template: # Template untuk pod yang akan di-deploy
+    metadata: # Metadata untuk template pod
+      labels: # Label yang akan diterapkan pada pod
+        app: shipping-service # Label yang diterapkan pada pod
+    spec: # Spesifikasi untuk template pod
+      containers: # Definisi dari kontainer yang akan dijalankan di dalam pod
+        - name: shipping-service # Nama dari kontainer
+          image: ghcr.io/sisatput/shipping-service:latest # Image yang akan digunakan untuk kontainer
+          ports: # Mendefinisikan port yang akan di-expose di dalam kontainer
+            - containerPort: 3001 # Port yang akan digunakan di dalam kontainer
+          env: # Environment variables yang akan digunakan di dalam kontainer
+            - name: AMQP_URL # Nama dari environment variable
+              value: "amqp://user:tRJfsI4M7PzAL2PI@my-rabbit-rabbitmq.ecomm:5672" # Nilai dari environment variable

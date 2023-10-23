@@ -1,0 +1,36 @@
+# Gateway Configuration
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-gateway  # Nama dari Gateway yang akan dibuat
+spec:
+  selector:
+    istio: ingressgateway  # Menggunakan default Istio controller
+  servers:
+  - port:
+      number: 80  # Nomor port yang akan digunakan
+      name: http  # Nama port
+      protocol: HTTP  # Protokol yang digunakan
+    hosts:
+    - "*"  # Host yang diizinkan, dalam hal ini semuanya
+
+# Virtual Service Configuration
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio  # Nama dari VirtualService yang akan dibuat
+spec:
+  hosts:
+  - "*"  # Host yang diizinkan, dalam hal ini semuanya
+  gateways:
+  - istio-gateway  # Menggunakan Gateway yang sudah didefinisikan sebelumnya
+  http:
+  - match:
+    - uri:
+        exact: /order  # Mencocokkan path URI yang tepat adalah /order
+    route:
+    - destination:
+        host: order-service  # Nama host dari layanan order-service
+        port:
+          number: 3000  # Nomor port yang akan digunakan oleh layanan order-service
